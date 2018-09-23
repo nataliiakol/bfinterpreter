@@ -10,73 +10,68 @@ namespace BFInterpreter
     {
         static void Main(string[] args)
         {
-            byte[] memoryArray = new byte[30000];
+            MemoryCollection memoryCollection = new MemoryCollection();
             var input = Console.ReadLine();
-            int pointer = 0;
-            Parse(input, pointer, memoryArray);
-            Console.ReadLine();
-        }
-        public static void Parse(string input, int pointer, byte[] memoryArray)
-        {
+
+
             for (int i = 0; i < input.Length; i++)
             {
                 switch (input[i])
                 {
-                    case '>': pointer++; break;
-                    case '<':
-                        if (pointer > 0)
-                        {
-                            pointer--;
-                        }
+                    case '>': memoryCollection.MoveNext(); break;
+                    case '<': memoryCollection.MovePrevious(); break;
+                    case '+': memoryCollection.Increment(); break;
+                    case '-': memoryCollection.Decrement();  break;
+                    case '.': Console.WriteLine(Convert.ToChar(memoryCollection.GetCurrentCell())); break;
+                    case '[': i = StartWhile(memoryCollection.GetCurrentCell(), input, i);
                         break;
-                    case '+': memoryArray[pointer]++; break;
-                    case '-':
-                        if (memoryArray[pointer] > 0)
-                        {
-                            memoryArray[pointer]--;
-                        }
+                    case ']': i = EndWhile(input, i);
                         break;
-                    case '.': Console.WriteLine(Convert.ToChar(memoryArray[pointer])); break;
-
-                    case '[':
-                        if (memoryArray[pointer] == 0)
-                        {
-                            int loop1 = 1;
-                            while (loop1 > 0)
-                            {
-                                i++;
-                                if (input[i] == '[')
-                                {
-                                    loop1++;
-                                }
-                                else if (input[i] == ']')
-                                {
-                                    loop1--;
-                                }
-                            }  
-                        }
-                        break;
-                    case ']':
-                        int loop = 1;
-                        while (loop > 0)
-                        {
-                            i--;
-                            if (input[i] == '[')
-                            {
-                                loop--;
-                            }
-                            else if (input[i] == ']')
-                            {
-                                loop++;
-                            }                
-                        }
-                        i--;
-                        break; 
                     default:
                         Console.WriteLine("Wrong input");
-                        break;
+                        break;                    
                 }
             }
+            Console.ReadLine();
+        }
+        private static int EndWhile(string input, int i)
+        {
+            int loop = 1;
+            while (loop > 0)
+            {
+                i--;
+                if (input[i] == '[')
+                {
+                    loop--;
+                }
+                else if (input[i] == ']')
+                {
+                    loop++;
+                }
+            }
+            i--;
+            return i;
+        }
+
+        private static int StartWhile(byte currentCell, string input, int i)
+        {
+            if (currentCell == 0)
+            {
+                int loop1 = 1;
+                while (loop1 > 0)
+                {
+                    i++;
+                    if (input[i] == '[')
+                    {
+                        loop1++;
+                    }
+                    else if (input[i] == ']')
+                    {
+                        loop1--;
+                    }
+                }
+            }
+            return i;
         }
     }
 }
