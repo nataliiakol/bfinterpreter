@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BFInterpreter
 {
@@ -12,66 +8,25 @@ namespace BFInterpreter
         {
             MemoryCollection memoryCollection = new MemoryCollection();
             var input = Console.ReadLine();
+            InputIterator inputIterator = new InputIterator(input);
 
-
-            for (int i = 0; i < input.Length; i++)
+            while (inputIterator.HasNext())
             {
-                switch (input[i])
+                switch (inputIterator.Next())
                 {
                     case '>': memoryCollection.MoveNext(); break;
                     case '<': memoryCollection.MovePrevious(); break;
                     case '+': memoryCollection.Increment(); break;
-                    case '-': memoryCollection.Decrement();  break;
+                    case '-': memoryCollection.Decrement(); break;
                     case '.': Console.WriteLine(Convert.ToChar(memoryCollection.GetCurrentCell())); break;
-                    case '[': i = StartWhile(memoryCollection.GetCurrentCell(), input, i);
-                        break;
-                    case ']': i = EndWhile(input, i);
-                        break;
-                    default:
-                        Console.WriteLine("Wrong input");
-                        break;                    
+                    case '[':
+                        if (memoryCollection.GetCurrentCell()==0)
+                        inputIterator.GoToEndBFLoop(); break;
+                    case ']': inputIterator.GoToStartBFLoop(); break;
+                    default : Console.WriteLine("Wrong input"); break;
                 }
             }
             Console.ReadLine();
-        }
-        private static int EndWhile(string input, int i)
-        {
-            int loop = 1;
-            while (loop > 0)
-            {
-                i--;
-                if (input[i] == '[')
-                {
-                    loop--;
-                }
-                else if (input[i] == ']')
-                {
-                    loop++;
-                }
-            }
-            i--;
-            return i;
-        }
-
-        private static int StartWhile(byte currentCell, string input, int i)
-        {
-            if (currentCell == 0)
-            {
-                int loop1 = 1;
-                while (loop1 > 0)
-                {
-                    i++;
-                    if (input[i] == '[')
-                    {
-                        loop1++;
-                    }
-                    else if (input[i] == ']')
-                    {
-                        loop1--;
-                    }
-                }
-            }
-            return i;
-        }
+        }        
     }
 }
